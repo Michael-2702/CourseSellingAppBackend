@@ -3,7 +3,7 @@ const adminRouter = Router()
 const bcrypt = require("bcrypt")
 const {Admin, Courses } = require("../models/db")
 const jwt = require("jsonwebtoken")
-const {JWT_ADMIN_SECRET} = process.env.JWT_ADMIN_SECRET
+const {JWT_ADMIN_SECRET} = require("../config")
 
 adminRouter.post("/signup", async (req, res) => {
     const username = req.body.username
@@ -40,27 +40,34 @@ adminRouter.post("/signup", async (req, res) => {
 
 adminRouter.post("/signin", async (req, res) => {
     const {email, password} = req.body;
-
+    
     const admin = await Admin.findOne({
-        email,
-        password
+        email: email
     })
-
-    if(admin){
-        const token = jwt.sign({
-            userId: admin._id.toString()
-        }, JWT_ADMIN_SECRET)
-
-        res.json({
-            token: token
+    if(!admin){
+        res.status(403).json({
+            message: "User Doesn't exist"
         })
     }
     else{
-        res.json({
-            msg: "Incorrect Creds"
-        })
+        const hashedPassword = await bcrypt.compare(password, admin.password)
 
+        if(admin){
+            const token = jwt.sign({
+                userId: admin._id
+            }, JWT_ADMIN_SECRET)
+
+            res.json({
+                token: token
+            })
+        }
+        else{
+            res.status(403).json({
+                message: "Incorrect credentials"
+            })
     }
+    }
+    
 })
 
 module.exports = {
