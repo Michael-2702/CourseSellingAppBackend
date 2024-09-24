@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express")
 const mongoose = require("mongoose")
 const { adminRouter } = require("./routes/admin")
@@ -8,7 +9,7 @@ app.use(express.json())
 app.use("/api/v1/admin", adminRouter)
 
 async function main() {
-    await mongoose.connect("mongodb+srv://admin:123michael456@cluster0.n3tz1.mongodb.net/CourseSelling-App")
+    await mongoose.connect(process.env.MONGO_URL)
     
     app.listen(3000)
 }
