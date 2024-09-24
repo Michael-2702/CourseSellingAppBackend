@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const {Admin, Courses } = require("../models/db")
 const jwt = require("jsonwebtoken")
 const {JWT_ADMIN_SECRET} = require("../config")
+const { adminMiddleware } = require("../middlewares/admin")
 
 adminRouter.post("/signup", async (req, res) => {
     const username = req.body.username
@@ -68,6 +69,24 @@ adminRouter.post("/signin", async (req, res) => {
         }
     }
     
+})
+
+adminRouter.post("/course", adminMiddleware, async (req, res) => {
+    const adminId = req.userId
+    const { title, description, price, ImageUrl, creatorId } = req.body
+
+    const course = await Courses.create({
+        title,
+        description,
+        price,
+        ImageUrl,
+        creatorId
+    })
+
+    res.json({
+        msg: "course created",
+        courseID: course._id
+    })
 })
 
 module.exports = {

@@ -12,9 +12,6 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    purchases: [{
-        courseID: mongoose.Types.ObjectId
-    }]
 })
 
 const adminSchema = new Schema({
@@ -34,7 +31,8 @@ const coursesSchema = new Schema({
     title: String,
     description: String,
     price: Number,
-    ImageUrl: String
+    ImageUrl: String,
+    creatorId: String
 })
 
 const purchases = new Schema({
