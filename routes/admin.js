@@ -75,7 +75,6 @@ adminRouter.post("/signin", async (req, res) => {
 
 adminRouter.post("/course", adminMiddleware, async (req, res) => {
     const adminId = req.userId
-    console.log(adminId)
     const { title, description, price, ImageUrl, creatorId } = req.body
 
     const course = await Courses.create({
@@ -92,7 +91,7 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
     )
 
     if (!admin) {
-        return res.status(404).json({ msg: "Admin not found" });
+        res.status(404).json({ msg: "Admin not found" });
     }
 
     res.json({
@@ -101,10 +100,28 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
     })
 })
 
-// adminRouter.put("createCourse", adminMiddleware, (req, res) => {
-//     const userId = req.userId
-//     const title: 
-// })
+adminRouter.get("/courses", adminMiddleware, async (req, res) => {
+    const userId = req.userId
+
+    const admin = await Admin.findById(userId)
+
+    if (!admin) {
+        res.status(404).json({ msg: "Admin not found" });
+    }
+
+    const getCourses = await Courses.find({
+        creatorId: userId
+    })
+
+    if (getCourses.length === 0) {
+        res.status(404).json({ msg: "No courses found for this admin" });
+    }
+
+    res.json({
+        msg: "Fetched Courses successfully",
+        createdCourses: getCourses
+    })
+})
 
 module.exports = {
     adminRouter

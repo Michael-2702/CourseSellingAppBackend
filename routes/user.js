@@ -89,7 +89,7 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
         })
 
         if (!course) {
-            return res.status(404).json({
+            res.status(404).json({
                 msg: "Course not found"
             });
         }
@@ -101,7 +101,7 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
 
 
         if (!updateResult) {
-            return res.status(400).json({
+            res.status(400).json({
                 msg: "Failed to purchase the course"
             });
         }
