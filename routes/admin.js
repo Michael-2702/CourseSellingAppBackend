@@ -10,6 +10,7 @@ adminRouter.post("/signup", async (req, res) => {
     const username = req.body.username
     const email = req.body.email
     const password = req.body.password
+    const createdCourses = []
     try{
         const existingUser = await Admin.findOne({
             email: email
@@ -26,7 +27,8 @@ adminRouter.post("/signup", async (req, res) => {
         await Admin.create({
             username: username,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            createdCourses: []
         })
     
         res.json({
@@ -73,6 +75,7 @@ adminRouter.post("/signin", async (req, res) => {
 
 adminRouter.post("/course", adminMiddleware, async (req, res) => {
     const adminId = req.userId
+    console.log(adminId)
     const { title, description, price, ImageUrl, creatorId } = req.body
 
     const course = await Courses.create({
@@ -83,11 +86,25 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
         creatorId
     })
 
+    const admin = await Admin.findByIdAndUpdate(
+        adminId,
+        { $addToSet: { createdCourses: course._id } }
+    )
+
+    if (!admin) {
+        return res.status(404).json({ msg: "Admin not found" });
+    }
+
     res.json({
         msg: "course created",
         courseID: course._id
     })
 })
+
+// adminRouter.put("createCourse", adminMiddleware, (req, res) => {
+//     const userId = req.userId
+//     const title: 
+// })
 
 module.exports = {
     adminRouter

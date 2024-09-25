@@ -29,6 +29,10 @@ const adminSchema = new Schema({
         type: String,
         required: true
     },
+    createdCourses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Courses'
+    }]
 })
 
 const coursesSchema = new Schema({
@@ -36,7 +40,10 @@ const coursesSchema = new Schema({
     description: String,
     price: Number,
     ImageUrl: String,
-    creatorId: String
+    creatorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
+    }
 })
 
 const purchases = new Schema({

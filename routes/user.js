@@ -84,8 +84,8 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
     const courseId = req.body.courseId;
 
     try{
-        const course = await Courses.findOne({
-            courseId
+        const course = await Courses.findById({
+            _id: courseId
         })
 
         if (!course) {
@@ -105,11 +105,11 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
                 msg: "Failed to purchase the course"
             });
         }
-
+        
 
         res.json({
             msg: "Course purchased",
-            purchases: updateResult.purchases 
+            purchasedCourses: course.title 
         })
     }
     catch(e){
