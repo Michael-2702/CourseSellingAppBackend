@@ -5,14 +5,39 @@ const { User, Courses } = require("../models/db")
 const jwt = require("jsonwebtoken")
 const {JWT_USER_SECRET} = require("../config")
 const { userMiddleware } = require("../middlewares/user")
+const { z } = require("zod")
 
 userRouter.post("/signup", async (req, res) => {
-    const username = req.body.username
-    const email = req.body.email
-    const password = req.body.password
-    const purchases = [];
 
     try{
+        const mySchema = z.object({
+            username: z.string(),
+            email: z.string().email().min(6),
+            password: z.string()
+                .min(8, "Password Should be of atleast 8 characters")
+                .max(100, "Password Should not exceed 100 characters")
+                .regex(/[a-z]/, "Password must contain atleast 1 lowercase letter")
+                .regex(/[A-Z]/, "Password must contain atleast 1 uppercase letter")
+                .regex(/[0-9]/, "Password must contain atleast 1 number")
+                .regex(/[^A-Za-z0-9]/, "Password must contain atleast 1 special character")
+        }).strict({
+            messageg: "Extra Fields not allowed"
+        })
+    
+        const response = mySchema.safeParse(req.body)
+    
+        if(!response.success){
+            res.status(411).json({
+                msg: "Incorrect Format",
+                error: response.error.errors
+            })
+        }
+    
+        const username = req.body.username
+        const email = req.body.email
+        const password = req.body.password
+        const purchases = [];
+        
         const existingUser = await User.findOne({
             email: email
         })
