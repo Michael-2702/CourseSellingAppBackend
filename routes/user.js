@@ -4,11 +4,13 @@ const bcrypt = require("bcrypt")
 const {User, Courses } = require("../models/db")
 const jwt = require("jsonwebtoken")
 const {JWT_USER_SECRET} = require("../config")
+const { userMiddleware } = require("../middlewares/user")
 
 userRouter.post("/signup", async (req, res) => {
     const username = req.body.username
     const email = req.body.email
     const password = req.body.password
+    const purchases = [];
 
     try{
         const existingUser = await User.findOne({
@@ -26,7 +28,8 @@ userRouter.post("/signup", async (req, res) => {
         await User.create({
             username: username,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            purchases: purchases
         })
     
         res.json({
@@ -74,9 +77,24 @@ userRouter.post("/signin", async (req, res) => {
     catch(e){
         console.log(e)
     }
-   
-    
 })
+
+// userRouter.put("/purchase", userMiddleware, (req, res) => {
+//     const userId = req.userId
+//     const title = "Web Dev"
+
+//     const course = Courses.findOne({
+//         title: title
+//     })
+
+//     if(course){
+//         User.updateOne({
+//             _id: userId
+//         },{
+//             $push: {courseId: course._id}
+//         })
+//     }
+// })
 
 module.exports = {
     userRouter

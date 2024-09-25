@@ -12,6 +12,10 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    purchases: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Courses'
+    }]
 })
 
 const adminSchema = new Schema({
