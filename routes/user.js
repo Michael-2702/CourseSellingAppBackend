@@ -115,7 +115,37 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
     catch(e){
         console.log(e)
     }
-    
+})
+
+userRouter.get("/courses", userMiddleware, async (req, res) => {
+    const userId = req.userId
+
+    const user = await User.findOne({
+        _id: userId
+    })
+
+    if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (!user.purchases || user.purchases.length === 0) {
+        return res.status(404).json({ msg: "No purchases found for this user" });
+    }
+
+    const courses = await Courses.find({
+        _id: { $in: user.purchases }
+    })
+
+    if(courses.length == 0){
+        res.status(404).json({
+            msg: "Course not found"
+        })
+    }
+
+    res.json({
+        msg: "Fetched courses succesfully",
+        courses: courses
+    })
 })
 
 module.exports = {
