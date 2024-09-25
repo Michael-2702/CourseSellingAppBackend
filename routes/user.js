@@ -79,22 +79,44 @@ userRouter.post("/signin", async (req, res) => {
     }
 })
 
-// userRouter.put("/purchase", userMiddleware, (req, res) => {
-//     const userId = req.userId
-//     const title = "Web Dev"
+userRouter.put("/purchase", userMiddleware, async (req, res) => {
+    const userId = req.userId
+    const title = req.body.title
 
-//     const course = Courses.findOne({
-//         title: title
-//     })
+    try{
+        const course = await Courses.findOne({
+            title
+        })
 
-//     if(course){
-//         User.updateOne({
-//             _id: userId
-//         },{
-//             $push: {courseId: course._id}
-//         })
-//     }
-// })
+        if (!course) {
+            return res.status(404).json({
+                msg: "Course not found"
+            });
+        }
+    
+        const updateResult = await User.findByIdAndUpdate(
+            userId,  
+            { $addToSet: { purchases: course._id } },  
+        );
+
+
+        if (!updateResult) {
+            return res.status(400).json({
+                msg: "Failed to purchase the course"
+            });
+        }
+
+
+        res.json({
+            msg: "Course purchased",
+            purchases: updateResult.purchases 
+        })
+    }
+    catch(e){
+        console.log(e)
+    }
+    
+})
 
 module.exports = {
     userRouter
