@@ -81,11 +81,11 @@ userRouter.post("/signin", async (req, res) => {
 
 userRouter.put("/purchase", userMiddleware, async (req, res) => {
     const userId = req.userId
-    const title = req.body.title
+    const courseId = req.body.courseId;
 
     try{
         const course = await Courses.findOne({
-            title
+            courseId
         })
 
         if (!course) {
@@ -96,7 +96,7 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
     
         const updateResult = await User.findByIdAndUpdate(
             userId,  
-            { $addToSet: { purchases: course._id } },  
+            { $addToSet: { purchases: course._id } },  // why addToSET instead of push? -> yeh duplicate entries avoid karta hai just like set DS
         );
 
 
