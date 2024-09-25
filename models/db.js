@@ -46,19 +46,25 @@ const coursesSchema = new Schema({
     }
 })
 
-const purchases = new Schema({
-    userId: mongoose.Types.ObjectId,
-    courseId: mongoose.Types.ObjectId,
-})
+// const purchases = new Schema({
+//     userId: [{
+//         type: mongoose.Schema.Types.ObjectId, 
+//         ref: 'User'
+//     }], 
+//     courseId: [{
+//         type: mongoose.Schema.Types.ObjectId, 
+//         ref: 'Course'
+//     }]
+// })
 
 const User = mongoose.model("user", userSchema)
 const Admin = mongoose.model("admin", adminSchema)
 const Courses = mongoose.model("courses", coursesSchema)
-const Purchases = mongoose.model("purchases", purchases)
+// const Purchases = mongoose.model("purchases", purchases)
 
 module.exports = {
     User,
     Admin,
     Courses,
-    Purchases
+    // Purchases
 }

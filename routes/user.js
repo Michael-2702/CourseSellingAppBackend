@@ -1,7 +1,7 @@
 const { Router } = require("express")
 const userRouter = Router()
 const bcrypt = require("bcrypt")
-const {User, Courses } = require("../models/db")
+const { User, Courses } = require("../models/db")
 const jwt = require("jsonwebtoken")
 const {JWT_USER_SECRET} = require("../config")
 const { userMiddleware } = require("../middlewares/user")
@@ -99,7 +99,6 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
             { $addToSet: { purchases: course._id } },  // why addToSET instead of push? -> yeh duplicate entries avoid karta hai just like set DS
         );
 
-
         if (!updateResult) {
             res.status(400).json({
                 msg: "Failed to purchase the course"
@@ -116,6 +115,16 @@ userRouter.put("/purchase", userMiddleware, async (req, res) => {
         console.log(e)
     }
 })
+
+userRouter.get("/allCourses", async (req, res) => {
+    const courses = await Courses.find({})
+
+    res.json({
+        msg: "All courses are Fetched",
+        courses
+    })
+})
+
 
 userRouter.get("/courses", userMiddleware, async (req, res) => {
     const userId = req.userId
